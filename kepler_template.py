@@ -30,23 +30,34 @@ def KeplerEq_prime(E, eps, t, t0, T):
 
 def ex_Anom(planet, t=0, t0=0):
     """ Exzentrische Anomalie als Nullstelle der Kepler-Gleichung """
-    return opt.newton(KeplerEq,3, args=(Planet["Erde"]["numEx"],t,t0,Planet["Erde"]["Periode"]))
+    return opt.newton(KeplerEq,3, args=(Planet[planet]["numEx"],t,t0,Planet[planet]["Periode"]))
 
 # Weiter mit Berechnung der wahren Anomalie und des Abstandes von der Sonne:
 
-def W_Anom(E,eps):
+def W_Anom(planet,t=0,t0=0):
     """Wahre Anomalie"""
+    E = ex_Anom(planet,t,t0)
+    eps = Planet[planet]["numEx"] #Zur besseren Lesbarkeit
+    
     if (E >= 0 and E <= sc.pi):
-        return sc.arccos*((sc.cos(E) - eps) / (1 - eps*sc.cos(E)))
+        return sc.arccos((sc.cos(E) - eps) / (1 - eps*sc.cos(E)))
         
     elif (E >= sc.pi and E <= 2*sc.pi):
-        return 2*sc.pi - sc.arccos*((sc.cos(E) - eps) / (1 - eps*sc.cos(E)))
+        return 2*sc.pi - sc.arccos((sc.cos(E) - eps) / (1 - eps*sc.cos(E)))
             
     else: 
-        return None
+        return None #Außerhalb der Intervalle nicht definiert
         
-def AbstandSonne(t,a,eps):
-    return a * (1 - eps**2) / (1 + eps*sc.cos(W_Anom()))
+def AbstandSonne(planet,t=0,t0=0):
+    a = Planet[planet]["Halbachse"] #Zur besseren Lesbarkeit
+    eps = Planet[planet]["numEx"] #Zur besseren Lesbarkeit
+    
+    return a * (1 - eps**2) / (1 + eps*sc.cos(W_Anom(planet,t,t0)))
 
+print W_Anom("Erde",300,0)
+#print sc.linspace(0,Planet["Erde"]["Periode"],1000)
+#print W_Anom("Erde",sc.linspace(0,Planet["Erde"]["Periode"],1000))
 
-print ex_Anom(["Erde"])
+plt.polar(W_Anom("Erde",sc.linspace(0,Planet["Erde"]["Periode"],1000)),AbstandSonne("Erde"),sc.linspace(0,Planet["Erde"]["Periode"],1000))
+
+plt.show()

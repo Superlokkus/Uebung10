@@ -46,7 +46,7 @@ def W_Anom(planet,t=0,t0=0):
         return 2*sc.pi - sc.arccos((sc.cos(E) - eps) / (1 - eps*sc.cos(E)))
             
     else: 
-        return None #Außerhalb der Intervalle nicht definiert
+        return 0 #Außerhalb der Intervalle nicht definiert
         
 def AbstandSonne(planet,t=0,t0=0):
     a = Planet[planet]["Halbachse"] #Zur besseren Lesbarkeit
@@ -55,9 +55,15 @@ def AbstandSonne(planet,t=0,t0=0):
     return a * (1 - eps**2) / (1 + eps*sc.cos(W_Anom(planet,t,t0)))
 
 print W_Anom("Erde",300,0)
-#print sc.linspace(0,Planet["Erde"]["Periode"],1000)
-#print W_Anom("Erde",sc.linspace(0,Planet["Erde"]["Periode"],1000))
 
-plt.polar(W_Anom("Erde",sc.linspace(0,Planet["Erde"]["Periode"],1000)),AbstandSonne("Erde"),sc.linspace(0,Planet["Erde"]["Periode"],1000))
+
+def PlanetPrint(planet):
+    """Plottet den Planeten"""
+    theta = [W_Anom(planet,i) for i in sc.linspace(0,Planet[planet]["Periode"],1000)]
+    r = [AbstandSonne(planet,i) for i in sc.linspace(0,Planet[planet]["Periode"],1000)]
+    plt.polar(theta,r, label=planet)
+     
+for p in Planet.keys():
+    PlanetPrint(p)
 
 plt.show()

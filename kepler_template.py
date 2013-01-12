@@ -5,14 +5,11 @@
 #Markus Klemm WS12/13 Phy-BA
 
 
-from __future__ import division  # problemlose Ganzzahl-Division
-import scipy as sc               # scipy beinhaltet numpy
-import scipy.optimize as opt     # Funktionen für Nullstellensuche
+from __future__ import division
+import scipy as sc
+import scipy.optimize as opt     
 from matplotlib import pyplot as plt
 
-"""
-Nullstellensuche: Kepler-Problem
-"""
 erdjahr = 365 # Tage
 # Parameter der Himmelskörper (Periode [d], mumerische Exzentrizität und
 # große Halbachse [AE]):
@@ -54,11 +51,8 @@ def AbstandSonne(planet,t=0,t0=0):
     
     return a * (1 - eps**2) / (1 + eps*sc.cos(W_Anom(planet,t,t0)))
 
-print W_Anom("Erde",300,0)
-
-
 def PlanetPrint(planet):
-    """Plottet den Planeten"""
+    """Plottet die Planetenbahn"""
     theta = [W_Anom(planet,i) for i in sc.linspace(0,Planet[planet]["Periode"],1000)]
     r = [AbstandSonne(planet,i) for i in sc.linspace(0,Planet[planet]["Periode"],1000)]
     plt.polar(theta,r, label=planet)
@@ -66,4 +60,7 @@ def PlanetPrint(planet):
 for p in Planet.keys():
     PlanetPrint(p)
 
+plt.title("Bahnbewegung um die Sonne") 
+plt.ylabel("Abstand in AE")
+plt.legend()
 plt.show()
